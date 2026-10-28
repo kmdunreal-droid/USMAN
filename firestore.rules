@@ -1,0 +1,126 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner() {
+      return isSignedIn() && (
+        request.auth.token.email == 'k.m.d.unreal@gmail.com' ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'owner'
+      );
+    }
+
+    function isMunshiOrOwner() {
+      return isSignedIn() && (
+        isOwner() ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'munshi'
+      );
+    }
+
+    function isEmployee() {
+      return isSignedIn();
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isOwner() || (isSignedIn() && request.auth.uid == userId);
+    }
+
+    // Suppliers & Customers master data
+    match /suppliers/{supplierId} {
+      allow read: if isSignedIn();
+      allow create, update: if isMunshiOrOwner();
+      allow delete: if isOwner();
+    }
+
+    match /customers/{customerId} {
+      allow read: if isSignedIn();
+      allow create, update: if isMunshiOrOwner();
+      allow delete: if isOwner();
+    }
+
+    // Inventory items
+    match /items/{itemId} {
+      allow read: if isSignedIn();
+      allow create, update: if isMunshiOrOwner();
+      allow delete: if isOwner();
+    }
+
+    // Immutable Stock Movement Ledger
+    match /stock_movements/{movementId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if false; // Immutable!
+    }
+
+    // Purchases (Incoming scrap & vehicle weighments)
+    match /purchases/{purchaseId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn();
+      allow delete: if isOwner();
+    }
+
+    // Sales & Deliveries
+    match /sales/{saleId} {
+      allow read: if isSignedIn();
+      allow create, update: if isMunshiOrOwner();
+      allow delete: if isOwner();
+    }
+
+    match /deliveries/{deliveryId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn();
+      allow delete: if isOwner();
+    }
+
+    // Processing & Metal Recovery
+    match /processing/{batchId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn();
+      allow delete: if isOwner();
+    }
+
+    // Laborers & Labor Logs
+    match /laborers/{laborerId} {
+      allow read: if isSignedIn();
+      allow create, update: if isMunshiOrOwner();
+      allow delete: if isOwner();
+    }
+
+    match /labor_logs/{logId} {
+      allow read: if isSignedIn();
+      allow create, update: if isMunshiOrOwner();
+      allow delete: if isOwner();
+    }
+
+    // Financial: Cashbook Payments & Expenses
+    match /payments/{paymentId} {
+      allow read: if isMunshiOrOwner();
+      allow create: if isMunshiOrOwner();
+      allow update: if isOwner();
+      allow delete: if false; // Must be reversed, not deleted
+    }
+
+    match /expenses/{expenseId} {
+      allow read: if isMunshiOrOwner();
+      allow create, update: if isMunshiOrOwner();
+      allow delete: if isOwner();
+    }
+
+    // Audit logs (Immutable history)
+    match /audit_logs/{auditId} {
+      allow read: if isMunshiOrOwner();
+      allow create: if isSignedIn();
+      allow update, delete: if false; // Strict tamper-proof
+    }
+
+    // Fallback rule
+    match /{document=**} {
+      allow read, write: if isSignedIn();
+    }
+  }
+}

@@ -1,0 +1,301 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "App user profile with role and contact information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["owner", "munshi", "employee"] },
+        "phone": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "disabled"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Supplier": {
+      "title": "Supplier",
+      "description": "Scrap seller / vendor profile and current payable balance",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "company": { "type": "string" },
+        "phone": { "type": "string" },
+        "city": { "type": "string" },
+        "cnic": { "type": "string" },
+        "currentBalance": { "type": "number" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["name", "phone"]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Scrap metal buyer / foundry mill profile and receivable balance",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "millName": { "type": "string" },
+        "phone": { "type": "string" },
+        "city": { "type": "string" },
+        "cnic": { "type": "string" },
+        "currentBalance": { "type": "number" },
+        "creditLimit": { "type": "number" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["name", "phone"]
+    },
+    "Item": {
+      "title": "Item",
+      "description": "Raw scrap or recovered metal inventory item",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "nameUrdu": { "type": "string" },
+        "nameEng": { "type": "string" },
+        "category": { "type": "string", "enum": ["raw_scrap", "recovered_metal", "processed_item"] },
+        "metalType": { "type": "string" },
+        "unit": { "type": "string", "enum": ["kg", "ton", "piece"] },
+        "currentStockKg": { "type": "number" },
+        "avgPurchasePricePerKg": { "type": "number" },
+        "alertMinStockKg": { "type": "number" }
+      },
+      "required": ["code", "nameUrdu", "nameEng", "category"]
+    },
+    "Purchase": {
+      "title": "Purchase",
+      "description": "Incoming scrap purchase vehicle weighment and bill record",
+      "type": "object",
+      "properties": {
+        "purchaseNo": { "type": "string" },
+        "supplierId": { "type": "string" },
+        "supplierName": { "type": "string" },
+        "vehicleNo": { "type": "string" },
+        "driverName": { "type": "string" },
+        "driverPhone": { "type": "string" },
+        "grossWeight": { "type": "number" },
+        "tareWeight": { "type": "number" },
+        "netWeight": { "type": "number" },
+        "deductionKg": { "type": "number" },
+        "finalPayableWeight": { "type": "number" },
+        "totalAmount": { "type": "number" },
+        "freightCharge": { "type": "number" },
+        "paidAmount": { "type": "number" },
+        "paymentStatus": { "type": "string", "enum": ["paid", "partial", "unpaid"] },
+        "weighmentSlipNo": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["purchaseNo", "supplierId", "grossWeight", "tareWeight", "netWeight", "totalAmount"]
+    },
+    "Sale": {
+      "title": "Sale",
+      "description": "Sales order to customer with cash or credit term",
+      "type": "object",
+      "properties": {
+        "saleNo": { "type": "string" },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "orderType": { "type": "string", "enum": ["direct", "contract"] },
+        "totalAmount": { "type": "number" },
+        "paidAmount": { "type": "number" },
+        "paymentStatus": { "type": "string", "enum": ["paid", "partial", "unpaid", "credit"] },
+        "deliveryStatus": { "type": "string", "enum": ["pending", "partial_delivered", "fully_delivered"] },
+        "notes": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["saleNo", "customerId", "totalAmount"]
+    },
+    "Delivery": {
+      "title": "Delivery",
+      "description": "Partial delivery or dispatch ticket chalan",
+      "type": "object",
+      "properties": {
+        "deliveryNo": { "type": "string" },
+        "saleId": { "type": "string" },
+        "saleNo": { "type": "string" },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "vehicleNo": { "type": "string" },
+        "driverName": { "type": "string" },
+        "weighmentTicketNo": { "type": "string" },
+        "grossWeight": { "type": "number" },
+        "tareWeight": { "type": "number" },
+        "netWeight": { "type": "number" },
+        "deductionKg": { "type": "number" },
+        "status": { "type": "string", "enum": ["dispatched", "received"] },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["deliveryNo", "saleId", "customerId", "vehicleNo"]
+    },
+    "Processing": {
+      "title": "Processing",
+      "description": "Scrap cutting and metal recovery batch record",
+      "type": "object",
+      "properties": {
+        "batchNo": { "type": "string" },
+        "processingType": { "type": "string" },
+        "totalRawWeightKg": { "type": "number" },
+        "totalRecoveredWeightKg": { "type": "number" },
+        "wasteWeightKg": { "type": "number" },
+        "recoveryPercentage": { "type": "number" },
+        "laborType": { "type": "string", "enum": ["daily_wages", "theka"] },
+        "laborContractorId": { "type": "string" },
+        "laborCost": { "type": "number" },
+        "otherExpenses": { "type": "number" },
+        "totalBatchCost": { "type": "number" },
+        "notes": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["batchNo", "processingType", "totalRawWeightKg", "totalRecoveredWeightKg"]
+    },
+    "Laborer": {
+      "title": "Laborer",
+      "description": "Godown laborer or thekedar profile and advance balance",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["daily_worker", "contractor_thekedar"] },
+        "phone": { "type": "string" },
+        "cnic": { "type": "string" },
+        "dailyRateOrPerKgRate": { "type": "number" },
+        "currentPeshgiBalance": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "inactive"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["name", "type"]
+    },
+    "LaborLog": {
+      "title": "LaborLog",
+      "description": "Daily attendance, processing weight, and wages calculation log",
+      "type": "object",
+      "properties": {
+        "laborerId": { "type": "string" },
+        "laborerName": { "type": "string" },
+        "date": { "type": "string" },
+        "workDescription": { "type": "string" },
+        "processedWeightKg": { "type": "number" },
+        "rate": { "type": "number" },
+        "grossEarned": { "type": "number" },
+        "peshgiDeduction": { "type": "number" },
+        "netPayable": { "type": "number" },
+        "paymentStatus": { "type": "string", "enum": ["paid", "pending"] },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["laborerId", "date", "netPayable"]
+    },
+    "Payment": {
+      "title": "Payment",
+      "description": "Cashbook payment or receipt voucher",
+      "type": "object",
+      "properties": {
+        "voucherNo": { "type": "string" },
+        "type": { "type": "string", "enum": ["supplier_payment", "customer_receipt", "labor_payment", "expense_payment", "capital_add"] },
+        "partyType": { "type": "string" },
+        "partyId": { "type": "string" },
+        "partyName": { "type": "string" },
+        "paymentMode": { "type": "string", "enum": ["cash", "bank_transfer", "cheque"] },
+        "bankName": { "type": "string" },
+        "referenceNo": { "type": "string" },
+        "amount": { "type": "number" },
+        "description": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["voucherNo", "type", "amount"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "Godown operational expense entry",
+      "type": "object",
+      "properties": {
+        "expenseNo": { "type": "string" },
+        "category": { "type": "string" },
+        "amount": { "type": "number" },
+        "paymentMode": { "type": "string" },
+        "paidTo": { "type": "string" },
+        "description": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["expenseNo", "category", "amount"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "System action audit trail log for accountability",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userRole": { "type": "string" },
+        "action": { "type": "string" },
+        "module": { "type": "string" },
+        "details": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["action", "module", "details", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles"
+    },
+    "/suppliers/{supplierId}": {
+      "schema": { "$ref": "#/entities/Supplier" },
+      "description": "Scrap suppliers"
+    },
+    "/customers/{customerId}": {
+      "schema": { "$ref": "#/entities/Customer" },
+      "description": "Scrap metal customers"
+    },
+    "/items/{itemId}": {
+      "schema": { "$ref": "#/entities/Item" },
+      "description": "Inventory items"
+    },
+    "/purchases/{purchaseId}": {
+      "schema": { "$ref": "#/entities/Purchase" },
+      "description": "Incoming scrap purchases"
+    },
+    "/sales/{saleId}": {
+      "schema": { "$ref": "#/entities/Sale" },
+      "description": "Customer sales orders"
+    },
+    "/deliveries/{deliveryId}": {
+      "schema": { "$ref": "#/entities/Delivery" },
+      "description": "Partial delivery chalans"
+    },
+    "/processing/{processingId}": {
+      "schema": { "$ref": "#/entities/Processing" },
+      "description": "Scrap recovery batches"
+    },
+    "/laborers/{laborerId}": {
+      "schema": { "$ref": "#/entities/Laborer" },
+      "description": "Labor & thekedar profiles"
+    },
+    "/labor_logs/{logId}": {
+      "schema": { "$ref": "#/entities/LaborLog" },
+      "description": "Daily labor logs"
+    },
+    "/payments/{paymentId}": {
+      "schema": { "$ref": "#/entities/Payment" },
+      "description": "Cashbook payment vouchers"
+    },
+    "/expenses/{expenseId}": {
+      "schema": { "$ref": "#/entities/Expense" },
+      "description": "Operational expenses"
+    },
+    "/audit_logs/{auditId}": {
+      "schema": { "$ref": "#/entities/AuditLog" },
+      "description": "System audit logs"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Al-Baraka Scrap Godown & Metal Trading System (گودام مینجمنٹ)",
+  "description": "Comprehensive scrap godown management system for metal trading in Pakistan with weighments, labor/theka processing, metal recovery, partial deliveries, ledgers, PKR accounting, and bilingual Urdu/English support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
